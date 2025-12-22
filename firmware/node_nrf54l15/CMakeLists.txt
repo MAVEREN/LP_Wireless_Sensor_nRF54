@@ -1,0 +1,26 @@
+cmake_minimum_required(VERSION 3.20.0)
+
+find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
+project(industrial_sensor_node)
+
+# Source files
+target_sources(app PRIVATE
+    src/main.c
+    src/sensor/sensor_control.c
+    src/sensor/adc.c
+    src/ble/advertising.c
+    src/ble/gatt_services.c
+    src/config/config_manager.c
+    src/power/power_manager.c
+    src/diagnostics/diagnostics.c
+)
+
+# Include directories
+target_include_directories(app PRIVATE
+    src
+    src/sensor
+    src/ble
+    src/config
+    src/power
+    src/diagnostics
+)
