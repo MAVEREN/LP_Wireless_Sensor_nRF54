@@ -1,0 +1,265 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://industrial-sensor.io/schemas/device-twin.schema.json",
+  "title": "Hub Device Twin Schema",
+  "description": "Azure IoT Hub Device Twin schema for Hub devices",
+  "type": "object",
+  "properties": {
+    "desired": {
+      "type": "object",
+      "description": "Desired properties (cloud → device)",
+      "properties": {
+        "schemaVersion": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "topology": {
+          "type": "object",
+          "description": "Topology mapping for nodes",
+          "properties": {
+            "siteId": {
+              "type": "string",
+              "description": "Site identifier"
+            },
+            "nodeMappings": {
+              "type": "array",
+              "description": "Node to machine assignments",
+              "items": {
+                "type": "object",
+                "required": ["nodeId", "machineId"],
+                "properties": {
+                  "nodeId": {
+                    "type": "string",
+                    "description": "Node identifier (MAC address)"
+                  },
+                  "machineId": {
+                    "type": "string",
+                    "description": "Machine/asset identifier"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "policies": {
+          "type": "object",
+          "description": "Hub operational policies",
+          "properties": {
+            "scanIntervalSeconds": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 3600
+            },
+            "connectMode": {
+              "type": "string",
+              "enum": ["scan_only", "connect_on_demand", "always_connected"]
+            },
+            "telemetryRateLimitPerHour": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10000
+            }
+          }
+        },
+        "jobs": {
+          "type": "array",
+          "description": "Requested jobs for hub to execute",
+          "items": {
+            "type": "object",
+            "required": ["jobId", "type", "createdAt"],
+            "properties": {
+              "jobId": {
+                "type": "string",
+                "description": "Unique job identifier"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "push_node_config",
+                  "pull_node_diagnostics",
+                  "trigger_node_maintenance",
+                  "update_hub_firmware",
+                  "export_support_package"
+                ]
+              },
+              "targetNodeId": {
+                "type": "string",
+                "description": "Target node MAC address (if applicable)"
+              },
+              "payload": {
+                "type": "object",
+                "description": "Job-specific payload"
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "timeoutSeconds": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 3600
+              }
+            }
+          }
+        },
+        "firmwareUpdate": {
+          "type": "object",
+          "description": "Firmware update directive",
+          "properties": {
+            "version": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string",
+              "format": "uri"
+            },
+            "checksum": {
+              "type": "string"
+            },
+            "scheduledAt": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        }
+      }
+    },
+    "reported": {
+      "type": "object",
+      "description": "Reported properties (device → cloud)",
+      "properties": {
+        "schemaVersion": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "hubStatus": {
+          "type": "object",
+          "properties": {
+            "firmwareVersion": {
+              "type": "string"
+            },
+            "uptime": {
+              "type": "integer",
+              "description": "Uptime in seconds"
+            },
+            "cellularSignal": {
+              "type": "object",
+              "properties": {
+                "rssi": {
+                  "type": "integer"
+                },
+                "quality": {
+                  "type": "string",
+                  "enum": ["excellent", "good", "fair", "poor"]
+                }
+              }
+            },
+            "lastSync": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "freeMemory": {
+              "type": "integer",
+              "description": "Free memory in bytes"
+            }
+          }
+        },
+        "nodes": {
+          "type": "array",
+          "description": "Summary of discovered nodes",
+          "items": {
+            "type": "object",
+            "properties": {
+              "nodeId": {
+                "type": "string"
+              },
+              "lastSeen": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "batteryMv": {
+                "type": "integer"
+              },
+              "batteryPercent": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "lastReading": {
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "type": "number"
+                  },
+                  "unit": {
+                    "type": "string"
+                  },
+                  "timestamp": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              },
+              "faults": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "sensor_high",
+                    "sensor_low",
+                    "sensor_disconnected",
+                    "adc_saturation",
+                    "low_battery",
+                    "watchdog_reset"
+                  ]
+                }
+              },
+              "firmwareVersion": {
+                "type": "string"
+              },
+              "rssi": {
+                "type": "integer",
+                "description": "Signal strength to hub"
+              }
+            }
+          }
+        },
+        "jobResults": {
+          "type": "array",
+          "description": "Results of executed jobs",
+          "items": {
+            "type": "object",
+            "required": ["jobId", "status", "completedAt"],
+            "properties": {
+              "jobId": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["queued", "running", "succeeded", "failed", "timeout"]
+              },
+              "startedAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "completedAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "errorCode": {
+                "type": "string"
+              },
+              "errorMessage": {
+                "type": "string"
+              },
+              "diagnostics": {
+                "type": "object",
+                "description": "Job-specific result data"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
