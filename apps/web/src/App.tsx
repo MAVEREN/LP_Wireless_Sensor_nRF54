@@ -5,6 +5,7 @@ import LocalModePage from './pages/LocalModePage';
 import RemoteModePage from './pages/RemoteModePage';
 import TopologyPage from './pages/TopologyPage';
 import FleetDashboard from './pages/FleetDashboard';
+import CommissioningWizard from './pages/CommissioningWizard';
 
 function App() {
   return (
@@ -29,6 +30,8 @@ function App() {
           <Route path="/remote" element={<RemoteModePage />} />
           <Route path="/topology" element={<TopologyPage />} />
           <Route path="/fleet" element={<FleetDashboard />} />
+          <Route path="/commission/node" element={<CommissioningWizard mode="node" />} />
+          <Route path="/commission/hub" element={<CommissioningWizard mode="hub" />} />
         </Routes>
       </Container>
       
