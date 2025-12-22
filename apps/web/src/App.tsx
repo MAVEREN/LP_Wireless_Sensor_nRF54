@@ -3,6 +3,8 @@ import { Box, Container, AppBar, Toolbar, Typography, Button } from '@mui/materi
 import HomePage from './pages/HomePage';
 import LocalModePage from './pages/LocalModePage';
 import RemoteModePage from './pages/RemoteModePage';
+import TopologyPage from './pages/TopologyPage';
+import FleetDashboard from './pages/FleetDashboard';
 
 function App() {
   return (
@@ -15,6 +17,8 @@ function App() {
           <Button color="inherit" href="/">Home</Button>
           <Button color="inherit" href="/local">Local</Button>
           <Button color="inherit" href="/remote">Remote</Button>
+          <Button color="inherit" href="/topology">Topology</Button>
+          <Button color="inherit" href="/fleet">Fleet</Button>
         </Toolbar>
       </AppBar>
       
@@ -23,6 +27,8 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/local" element={<LocalModePage />} />
           <Route path="/remote" element={<RemoteModePage />} />
+          <Route path="/topology" element={<TopologyPage />} />
+          <Route path="/fleet" element={<FleetDashboard />} />
         </Routes>
       </Container>
       
