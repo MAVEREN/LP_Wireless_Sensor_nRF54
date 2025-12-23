@@ -1,0 +1,54 @@
+name: Deploy Backend
+
+on:
+  push:
+    branches: [main]
+    paths: ['backend/**']
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy'
+        required: true
+        type: choice
+        options:
+          - dev
+          - staging
+          - prod
+
+jobs:
+  build-and-deploy:
+    name: Build and Deploy Backend
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment || 'dev' }}
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      
+      - name: Build Docker Image
+        working-directory: backend/api
+        run: |
+          docker build -t backend:${{ github.sha }} .
+      
+      - name: Push to ACR
+        env:
+          ACR_NAME: ${{ secrets.ACR_NAME }}
+        run: |
+          az acr login --name $ACR_NAME
+          docker tag backend:${{ github.sha }} $ACR_NAME.azurecr.io/backend:${{ github.sha }}
+          docker push $ACR_NAME.azurecr.io/backend:${{ github.sha }}
+      
+      - name: Deploy to Container Apps
+        env:
+          ENV: ${{ github.event.inputs.environment || 'dev' }}
+          ACR_NAME: ${{ secrets.ACR_NAME }}
+        run: |
+          az containerapp update \
+            --name backend-$ENV \
+            --resource-group rg-industrial-iot-$ENV \
+            --image $ACR_NAME.azurecr.io/backend:${{ github.sha }}
