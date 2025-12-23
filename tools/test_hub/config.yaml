@@ -1,0 +1,16 @@
+ble:
+  scan_interval_ms: 100
+  scan_window_ms: 50
+  scan_duration_sec: 10
+  max_connections: 5
+  
+services:
+  - "00001000-0000-1000-8000-00805f9b34fb"  # Industrial Sensor Service
+  
+cloud:
+  mock_enabled: true
+  web_port: 8080
+  
+jobs:
+  timeout_sec: 30
+  retry_count: 3
