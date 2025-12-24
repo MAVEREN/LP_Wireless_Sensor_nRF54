@@ -1,0 +1,29 @@
+{
+  "name": "@industrial-sensor/common",
+  "version": "1.0.0",
+  "description": "Common schemas and protocol definitions for industrial sensor network",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest",
+    "lint": "eslint . --ext .ts",
+    "validate-schemas": "node scripts/validate-schemas.js"
+  },
+  "keywords": [
+    "iot",
+    "ble",
+    "industrial",
+    "sensors"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0",
+    "vitest": "^1.0.0",
+    "eslint": "^8.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "ajv": "^8.12.0"
+  }
+}

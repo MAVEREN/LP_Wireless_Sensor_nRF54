@@ -1,0 +1,169 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://industrial-sensor.io/schemas/node-config.schema.json",
+  "title": "Node Configuration Schema",
+  "description": "Configuration schema for nRF54L15 sensor nodes",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "sampling",
+    "calibration",
+    "advertisement",
+    "binding"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "description": "Schema version for backward compatibility",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+      "examples": ["1.0.0"]
+    },
+    "sampling": {
+      "type": "object",
+      "required": ["intervalSeconds", "warmupMs", "burstCount", "aggregation"],
+      "properties": {
+        "intervalSeconds": {
+          "type": "integer",
+          "description": "Sampling interval in seconds",
+          "minimum": 1,
+          "maximum": 86400
+        },
+        "warmupMs": {
+          "type": "integer",
+          "description": "Sensor power warm-up delay in milliseconds",
+          "minimum": 0,
+          "maximum": 10000
+        },
+        "burstCount": {
+          "type": "integer",
+          "description": "Number of ADC samples per measurement",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "aggregation": {
+          "type": "string",
+          "description": "Aggregation method for burst samples",
+          "enum": ["mean", "median", "min", "max"]
+        }
+      }
+    },
+    "calibration": {
+      "type": "object",
+      "required": ["type", "points"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Calibration type",
+          "enum": ["linear", "polynomial", "table"]
+        },
+        "points": {
+          "type": "array",
+          "description": "Calibration points [voltage, engineering_value]",
+          "minItems": 2,
+          "items": {
+            "type": "object",
+            "required": ["voltage", "value"],
+            "properties": {
+              "voltage": {
+                "type": "number",
+                "description": "Voltage in volts",
+                "minimum": 0,
+                "maximum": 5
+              },
+              "value": {
+                "type": "number",
+                "description": "Engineering value (sensor-specific units)"
+              }
+            }
+          }
+        },
+        "polynomial": {
+          "type": "array",
+          "description": "Polynomial coefficients (if type=polynomial)",
+          "items": {
+            "type": "number"
+          }
+        },
+        "unit": {
+          "type": "string",
+          "description": "Engineering unit",
+          "examples": ["PSI", "Bar", "Celsius", "Percent"]
+        }
+      }
+    },
+    "advertisement": {
+      "type": "object",
+      "required": ["policy", "heartbeatSeconds"],
+      "properties": {
+        "policy": {
+          "type": "string",
+          "description": "Advertisement policy",
+          "enum": ["each_sample", "heartbeat", "on_change"]
+        },
+        "heartbeatSeconds": {
+          "type": "integer",
+          "description": "Heartbeat interval in seconds",
+          "minimum": 1,
+          "maximum": 3600
+        }
+      }
+    },
+    "faults": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enable fault detection"
+        },
+        "lowThreshold": {
+          "type": "number",
+          "description": "Low voltage threshold for fault detection"
+        },
+        "highThreshold": {
+          "type": "number",
+          "description": "High voltage threshold for fault detection"
+        },
+        "lowBatteryMv": {
+          "type": "integer",
+          "description": "Low battery threshold in millivolts",
+          "minimum": 1800,
+          "maximum": 3600
+        }
+      }
+    },
+    "binding": {
+      "type": "object",
+      "required": ["hubId", "securityPolicy"],
+      "properties": {
+        "hubId": {
+          "type": "string",
+          "description": "Bound hub identifier (MAC or UUID)",
+          "pattern": "^([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}$|^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "securityPolicy": {
+          "type": "string",
+          "description": "Security policy for configuration access",
+          "enum": ["open", "bound_hub_only", "authenticated"]
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "integer",
+          "description": "Configuration version number"
+        },
+        "lastModified": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last modification timestamp"
+        },
+        "modifiedBy": {
+          "type": "string",
+          "description": "User or system that last modified config"
+        }
+      }
+    }
+  }
+}
