@@ -125,7 +125,7 @@ See [Developer Setup Guide](docs/DEVELOPER_SETUP.md) for detailed instructions.
 - Signed firmware updates
 
 ### Flexible Topology
-- Organizations → Sites → Machines/Assets → Nodes/Hubs
+- Organizations → Sites → Sensor Groups → Nodes/Hubs
 - Logical asset grouping independent of radio topology
 - Reassignment with full audit trail
 

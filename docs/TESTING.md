@@ -160,7 +160,7 @@ test.describe('Topology Management', () => {
     
     await expect(page.getByText('Organizations')).toBeVisible();
     await expect(page.getByText('Sites')).toBeVisible();
-    await expect(page.getByText('Machines')).toBeVisible();
+    await expect(page.getByText('Sensor Groups')).toBeVisible();
   });
   
   test('should create new organization', async ({ page }) => {
@@ -338,7 +338,7 @@ python test_hub.py --test-mode
 3. Scan for devices
 4. Select node
 5. Configure sampling parameters
-6. Assign to machine
+6. Assign to sensor group
 7. Verify node appears in fleet dashboard
 
 **Expected**: Node commissioned and reporting data
@@ -346,7 +346,7 @@ python test_hub.py --test-mode
 #### Scenario 2: Remote Configuration
 
 1. Open web app → Topology
-2. Select machine with node
+2. Select sensor group with node
 3. Update sampling interval
 4. Submit job
 5. Monitor job status

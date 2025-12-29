@@ -121,30 +121,30 @@ Content-Type: application/json
 }
 ```
 
-### Machines
+### Sensor Groups
 
-#### List Machines by Site
+#### List Sensor Groups by Site
 ```http
-GET /api/topology/sites/:siteId/machines
+GET /api/topology/sites/:siteId/sensor-groups
 ```
 
-#### Create Machine
+#### Create Sensor Group
 ```http
-POST /api/topology/machines
+POST /api/topology/sensor-groups
 Content-Type: application/json
 
 {
   "name": "Press 101",
-  "machine_type": "hydraulic_press",
+  "group_type": "hydraulic_press",
   "site_id": 1
 }
 ```
 
 ### Nodes
 
-#### List Nodes by Machine
+#### List Nodes by Sensor Group
 ```http
-GET /api/topology/machines/:machineId/nodes
+GET /api/topology/sensor-groups/:sensorGroupId/nodes
 ```
 
 **Response**:
@@ -154,7 +154,7 @@ GET /api/topology/machines/:machineId/nodes
     "id": 1,
     "node_id": "NODE-001",
     "device_address": "DC:A6:32:A3:F2:15",
-    "machine_id": 1,
+    "sensor_group_id": 1,
     "battery_level": 95,
     "latest_reading": 23.5,
     "fault_flags": 0,

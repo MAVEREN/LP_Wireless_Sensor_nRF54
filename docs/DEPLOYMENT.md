@@ -5,11 +5,11 @@ Complete guide for deploying the Industrial Sensor Network to Azure.
 ## Prerequisites
 
 - Azure subscription
-- Azure CLI installed
-- Terraform >= 1.5
+- Azure CLI installed (see [DEVELOPER_SETUP.md](DEVELOPER_SETUP.md) for Windows installation)
+- Terraform >= 1.5 (see [DEVELOPER_SETUP.md](DEVELOPER_SETUP.md) for Windows installation)
 - GitHub repository
-- Node.js 20 LTS
-- Docker (for backend container)
+- Node.js 20 LTS (see [DEVELOPER_SETUP.md](DEVELOPER_SETUP.md) for Windows installation)
+- Docker (for backend container) - Windows requires Docker Desktop with WSL 2
 
 ## Overview
 
@@ -24,6 +24,7 @@ Deployment involves:
 ### Setup Azure CLI
 
 ```bash
+# macOS/Linux
 # Login to Azure
 az login
 
@@ -35,9 +36,23 @@ az ad sp create-for-rbac --name "terraform-sp" --role="Contributor" \
   --scopes="/subscriptions/<subscription-id>"
 ```
 
+```powershell
+# Windows (PowerShell)
+# Login to Azure
+az login
+
+# Set subscription
+az account set --subscription <subscription-id>
+
+# Create service principal for Terraform
+az ad sp create-for-rbac --name "terraform-sp" --role="Contributor" `
+  --scopes="/subscriptions/<subscription-id>"
+```
+
 ### Configure Terraform
 
 ```bash
+# macOS/Linux
 cd infra/terraform/env/dev
 
 # Create terraform.tfvars
@@ -46,6 +61,18 @@ location = "eastus"
 environment = "dev"
 db_admin_password = "<secure-password>"
 EOF
+```
+
+```powershell
+# Windows (PowerShell)
+cd infra/terraform/env/dev
+
+# Create terraform.tfvars
+@"
+location = "eastus"
+environment = "dev"
+db_admin_password = "<secure-password>"
+"@ | Out-File -FilePath terraform.tfvars -Encoding UTF8
 ```
 
 ### Deploy Infrastructure
@@ -81,6 +108,7 @@ terraform output -json > outputs.json
 ### Build Container Image
 
 ```bash
+# macOS/Linux
 cd backend/api
 
 # Build Docker image
@@ -95,9 +123,26 @@ az acr login --name <acr-name>
 docker push <acr-name>.azurecr.io/backend:latest
 ```
 
+```powershell
+# Windows (PowerShell)
+cd backend/api
+
+# Build Docker image
+docker build -t industrial-sensor-backend:latest .
+
+# Tag for Azure Container Registry
+docker tag industrial-sensor-backend:latest `
+  <acr-name>.azurecr.io/backend:latest
+
+# Push to ACR
+az acr login --name <acr-name>
+docker push <acr-name>.azurecr.io/backend:latest
+```
+
 ### Configure Environment Variables
 
 ```bash
+# macOS/Linux
 # Get connection strings from Terraform outputs
 IOT_HUB_CONNECTION=$(terraform output -raw iot_hub_connection_string)
 DB_CONNECTION=$(terraform output -raw database_connection_string)
@@ -117,6 +162,29 @@ IOT_HUB_CONNECTION_STRING=${IOT_HUB_CONNECTION}
 JWT_SECRET=<secure-secret>
 APPLICATIONINSIGHTS_CONNECTION_STRING=<app-insights-connection>
 EOF
+```
+
+```powershell
+# Windows (PowerShell)
+# Get connection strings from Terraform outputs
+$IOT_HUB_CONNECTION = terraform output -raw iot_hub_connection_string
+$DB_CONNECTION = terraform output -raw database_connection_string
+$APP_INSIGHTS_KEY = terraform output -raw app_insights_key
+
+# Create environment variables file
+@"
+NODE_ENV=production
+PORT=3000
+DATABASE_HOST=<db-host>
+DATABASE_PORT=5432
+DATABASE_NAME=industrial_sensor
+DATABASE_USER=<db-user>
+DATABASE_PASSWORD=<db-password>
+DATABASE_SSL=true
+IOT_HUB_CONNECTION_STRING=$IOT_HUB_CONNECTION
+JWT_SECRET=<secure-secret>
+APPLICATIONINSIGHTS_CONNECTION_STRING=<app-insights-connection>
+"@ | Out-File -FilePath backend/.env.production -Encoding UTF8
 ```
 
 ### Deploy to Container Apps
@@ -151,6 +219,20 @@ npm run seed
 ### Build Web App
 
 ```bash
+# macOS/Linux
+cd apps/web
+
+# Install dependencies
+npm ci
+
+# Build for production
+npm run build
+
+# Output in dist/
+```
+
+```powershell
+# Windows (PowerShell)
 cd apps/web
 
 # Install dependencies
@@ -194,6 +276,7 @@ jobs:
 #### Option 2: Azure CLI
 
 ```bash
+# macOS/Linux
 # Get deployment token
 DEPLOY_TOKEN=$(az staticwebapp secrets list \
   --name web-app \
@@ -205,6 +288,22 @@ az staticwebapp deploy \
   --name web-app \
   --resource-group <resource-group> \
   --source ./dist \
+  --token $DEPLOY_TOKEN
+```
+
+```powershell
+# Windows (PowerShell)
+# Get deployment token
+$DEPLOY_TOKEN = az staticwebapp secrets list `
+  --name web-app `
+  --resource-group <resource-group> `
+  --query "properties.apiKey" -o tsv
+
+# Deploy
+az staticwebapp deploy `
+  --name web-app `
+  --resource-group <resource-group> `
+  --source ./dist `
   --token $DEPLOY_TOKEN
 ```
 
@@ -223,6 +322,7 @@ az staticwebapp appsettings set \
 ### Configure DPS
 
 ```bash
+# macOS/Linux
 # Get DPS ID Scope
 DPS_ID_SCOPE=$(terraform output -raw dps_id_scope)
 
@@ -232,6 +332,20 @@ az iot dps enrollment-group create \
   --resource-group <resource-group> \
   --enrollment-id hubs-enrollment \
   --allocation-policy static \
+  --iot-hubs <iot-hub-name>.azure-devices.net
+```
+
+```powershell
+# Windows (PowerShell)
+# Get DPS ID Scope
+$DPS_ID_SCOPE = terraform output -raw dps_id_scope
+
+# Create enrollment group
+az iot dps enrollment-group create `
+  --dps-name <dps-name> `
+  --resource-group <resource-group> `
+  --enrollment-id hubs-enrollment `
+  --allocation-policy static `
   --iot-hubs <iot-hub-name>.azure-devices.net
 ```
 
@@ -258,6 +372,7 @@ az iot dps enrollment-group create \
 ### Setup Secrets
 
 ```bash
+# macOS/Linux
 # GitHub repository secrets
 gh secret set AZURE_CREDENTIALS --body '{"clientId":"...","clientSecret":"...","subscriptionId":"...","tenantId":"..."}'
 gh secret set AZURE_STATIC_WEB_APPS_API_TOKEN --body '<token>'
@@ -265,6 +380,18 @@ gh secret set ACR_USERNAME --body '<username>'
 gh secret set ACR_PASSWORD --body '<password>'
 gh secret set DATABASE_URL --body '<connection-string>'
 ```
+
+```powershell
+# Windows (PowerShell)
+# GitHub repository secrets
+gh secret set AZURE_CREDENTIALS --body '{"clientId":"...","clientSecret":"...","subscriptionId":"...","tenantId":"..."}'
+gh secret set AZURE_STATIC_WEB_APPS_API_TOKEN --body '<token>'
+gh secret set ACR_USERNAME --body '<username>'
+gh secret set ACR_PASSWORD --body '<password>'
+gh secret set DATABASE_URL --body '<connection-string>'
+```
+
+**Note**: The `gh` CLI commands are the same on all platforms.
 
 ### CI/CD Workflow
 
@@ -539,6 +666,7 @@ az staticwebapp deploy --name web-app --source ./dist
 ### Updates
 
 ```bash
+# macOS/Linux
 # Update backend
 cd backend/api
 npm update
@@ -546,6 +674,25 @@ npm audit fix
 docker build -t <acr>.azurecr.io/backend:$(git rev-parse --short HEAD) .
 docker push <acr>.azurecr.io/backend:$(git rev-parse --short HEAD)
 az containerapp update --image <acr>.azurecr.io/backend:$(git rev-parse --short HEAD)
+
+# Update web
+cd apps/web
+npm update
+npm audit fix
+npm run build
+az staticwebapp deploy --source ./dist
+```
+
+```powershell
+# Windows (PowerShell)
+# Update backend
+cd backend/api
+npm update
+npm audit fix
+$gitHash = git rev-parse --short HEAD
+docker build -t <acr>.azurecr.io/backend:$gitHash .
+docker push <acr>.azurecr.io/backend:$gitHash
+az containerapp update --image <acr>.azurecr.io/backend:$gitHash
 
 # Update web
 cd apps/web
