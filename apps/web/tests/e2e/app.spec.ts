@@ -8,7 +8,7 @@ test.describe('Topology Management E2E Tests', () => {
   test('should display topology page', async ({ page }) => {
     await expect(page.locator('h4:has-text("Organizations")')).toBeVisible();
     await expect(page.locator('h4:has-text("Sites")')).toBeVisible();
-    await expect(page.locator('h4:has-text("SensorGroups")')).toBeVisible();
+    await expect(page.locator('h4:has-text("Sensor Groups")')).toBeVisible();
   });
 
   test('should create a new organization', async ({ page }) => {

@@ -160,7 +160,7 @@ function TopologyPage() {
       </Typography>
 
       <Typography variant="body1" paragraph>
-        Manage your organization structure: Organizations → Sites → SensorGroups → Nodes
+        Manage your organization structure: Organizations → Sites → Sensor Groups → Nodes
       </Typography>
 
       <Grid container spacing={3}>
@@ -215,7 +215,7 @@ function TopologyPage() {
                     >
                       <ListItemText
                         primary={site.name}
-                        secondary={`${site.sensorGroups?.length || 0} sensorGroups, ${site.hubs?.length || 0} hubs`}
+                        secondary={`${site.sensorGroups?.length || 0} sensor groups, ${site.hubs?.length || 0} hubs`}
                       />
                     </ListItem>
                   ))}
@@ -227,12 +227,12 @@ function TopologyPage() {
           </Card>
         </Grid>
 
-        {/* SensorGroups */}
+        {/* Sensor Groups */}
         <Grid item xs={12} md={4}>
           <Card>
             <CardContent>
               <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-                <Typography variant="h6">SensorGroups</Typography>
+                <Typography variant="h6">Sensor Groups</Typography>
                 <IconButton
                   size="small"
                   disabled={!selectedSite}
@@ -274,7 +274,7 @@ function TopologyPage() {
                   <Typography variant="h6">Nodes at this Site</Typography>
                 </Box>
                 <Typography variant="body2" color="text.secondary">
-                  Total nodes across all sensorGroups: {sensorGroups.reduce((sum, m) => sum + (m.nodes?.length || 0), 0)}
+                  Total nodes across all sensor groups: {sensorGroups.reduce((sum, m) => sum + (m.nodes?.length || 0), 0)}
                 </Typography>
               </CardContent>
             </Card>
@@ -299,7 +299,7 @@ function TopologyPage() {
       {/* Create Dialog */}
       <Dialog open={openDialog} onClose={handleCloseDialog}>
         <DialogTitle>
-          Create New {dialogType === 'org' ? 'Organization' : dialogType === 'site' ? 'Site' : 'SensorGroup'}
+          Create New {dialogType === 'org' ? 'Organization' : dialogType === 'site' ? 'Site' : 'Sensor Group'}
         </DialogTitle>
         <DialogContent>
           <TextField
