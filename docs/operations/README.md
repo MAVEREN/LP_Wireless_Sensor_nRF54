@@ -94,6 +94,7 @@ Rotation schedule: Every 90 days
 #### Database Connection String
 
 ```bash
+# macOS/Linux
 # Generate new password
 NEW_PASSWORD=$(openssl rand -base64 32)
 
@@ -112,6 +113,29 @@ az keyvault secret set \
 # Restart applications to pick up new secret
 az containerapp revision restart \
   --resource-group {rg} \
+  --name {app-name}
+```
+
+```powershell
+# Windows (PowerShell)
+# Generate new password
+$NEW_PASSWORD = -join ((48..57) + (65..90) + (97..122) | Get-Random -Count 32 | ForEach-Object {[char]$_})
+
+# Update PostgreSQL password
+az postgres flexible-server update `
+  --resource-group {rg} `
+  --name {db-name} `
+  --admin-password "$NEW_PASSWORD"
+
+# Update Key Vault secret
+az keyvault secret set `
+  --vault-name {kv-name} `
+  --name "DatabasePassword" `
+  --value "$NEW_PASSWORD"
+
+# Restart applications to pick up new secret
+az containerapp revision restart `
+  --resource-group {rg} `
   --name {app-name}
 ```
 
@@ -137,6 +161,7 @@ az iot hub policy renew-key \
 #### JWT Signing Keys
 
 ```bash
+# macOS/Linux
 # Generate new key pair
 openssl genrsa -out private_new.pem 4096
 openssl rsa -in private_new.pem -pubout -out public_new.pem
@@ -150,6 +175,26 @@ az keyvault secret set \
 # Update backend to support both keys (dual-key period)
 # After 24 hours, remove old key
 ```
+
+```powershell
+# Windows (PowerShell)
+# Generate new key pair
+openssl genrsa -out private_new.pem 4096
+openssl rsa -in private_new.pem -pubout -out public_new.pem
+
+# Add new key to Key Vault
+az keyvault secret set `
+  --vault-name {kv-name} `
+  --name "JwtPrivateKey-v2" `
+  --file private_new.pem
+
+# Update backend to support both keys (dual-key period)
+# After 24 hours, remove old key
+```
+
+**Note**: OpenSSL is required. On Windows, install via:
+- Git for Windows (includes OpenSSL)
+- Or download from [slproweb.com/products/Win32OpenSSL.html](https://slproweb.com/products/Win32OpenSSL.html)
 
 ## Firmware Rollout
 
@@ -197,11 +242,29 @@ az iot hub device-twin update-batch \
 After 3-day pilot:
 
 ```bash
+# macOS/Linux
 # Gradual rollout (10% per day)
 ./scripts/firmware-rollout.sh \
   --version 1.1.0 \
   --batch-size 10 \
   --interval 1d \
+  --exclude canary,pilot
+```
+
+```powershell
+# Windows (PowerShell)
+# Gradual rollout (10% per day)
+.\scripts\firmware-rollout.ps1 `
+  -Version 1.1.0 `
+  -BatchSize 10 `
+  -Interval 1d `
+  -Exclude canary,pilot
+
+# Or if using bash script via Git Bash
+bash ./scripts/firmware-rollout.sh `
+  --version 1.1.0 `
+  --batch-size 10 `
+  --interval 1d `
   --exclude canary,pilot
 ```
 
@@ -233,11 +296,22 @@ Azure PostgreSQL Flexible Server:
 ### Manual Backup
 
 ```bash
+# macOS/Linux
 # Create on-demand backup
 az postgres flexible-server backup create \
   --resource-group {rg} \
   --name {db-name} \
   --backup-name manual-backup-$(date +%Y%m%d-%H%M%S)
+```
+
+```powershell
+# Windows (PowerShell)
+# Create on-demand backup
+$timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
+az postgres flexible-server backup create `
+  --resource-group {rg} `
+  --name {db-name} `
+  --backup-name "manual-backup-$timestamp"
 ```
 
 ### Restore from Backup
@@ -370,9 +444,25 @@ git push origin main
 ### Infrastructure Rollback
 
 ```bash
+# macOS/Linux
 # Terraform rollback to previous state
 cd infra/terraform/env/prod
 terraform state pull > backup-$(date +%Y%m%d).tfstate
+
+# Check out previous version
+git checkout {previous-commit}
+
+# Plan and apply
+terraform plan
+terraform apply
+```
+
+```powershell
+# Windows (PowerShell)
+# Terraform rollback to previous state
+cd infra/terraform/env/prod
+$timestamp = Get-Date -Format "yyyyMMdd"
+terraform state pull | Out-File -FilePath "backup-$timestamp.tfstate"
 
 # Check out previous version
 git checkout {previous-commit}
