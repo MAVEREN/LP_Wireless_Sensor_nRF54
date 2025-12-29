@@ -100,7 +100,7 @@ function TopologyPage() {
   const loadSensorGroups = async (siteId: string) => {
     try {
       const response = await axios.get(
-        `${apiUrl}/api/topology/sites/${siteId}/sensorGroups`,
+        `${apiUrl}/api/topology/sites/${siteId}/sensor-groups`,
       );
       setSensorGroups(response.data);
     } catch (error) {
@@ -141,7 +141,7 @@ function TopologyPage() {
         });
         loadSites(selectedOrg.id);
       } else if (dialogType === 'sensorGroup' && selectedSite) {
-        await axios.post(`${apiUrl}/api/topology/sensorGroups`, {
+        await axios.post(`${apiUrl}/api/topology/sensor-groups`, {
           ...formData,
           siteId: selectedSite.id,
         });
