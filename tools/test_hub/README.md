@@ -45,7 +45,7 @@ pip install -r requirements.txt
    
    If not installed, download from [python.org](https://www.python.org/downloads/) or install via:
    ```powershell
-   winget install Python.Python.3.12
+   winget install Python.Python.3
    ```
 
 2. **Enable Bluetooth**:

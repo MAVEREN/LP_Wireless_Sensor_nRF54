@@ -457,7 +457,7 @@ k6 run scripts/load-test.js
 choco install k6
 
 # Option 2: Using winget
-winget install k6 --source winget
+winget install k6
 
 # Option 3: Download MSI installer from https://k6.io/docs/getting-started/installation/
 
