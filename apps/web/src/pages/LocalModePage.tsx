@@ -39,7 +39,7 @@ function LocalModePage() {
               <ul>
                 <li>Connect via Web Bluetooth</li>
                 <li>Read device information</li>
-                <li>Assign to machine</li>
+                <li>Assign to sensorGroup</li>
                 <li>Configure sampling parameters</li>
                 <li>Set calibration values</li>
               </ul>

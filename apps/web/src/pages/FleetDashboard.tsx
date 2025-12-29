@@ -41,8 +41,8 @@ interface NodeStatus {
   status: string;
   batteryPercent: number;
   lastReading: any;
-  machineId: string;
-  machineName?: string;
+  sensorGroupId: string;
+  sensorGroupName?: string;
   lastSeen: Date;
   faults: string[];
 }
@@ -95,8 +95,8 @@ function FleetDashboard() {
           status: 'operational',
           batteryPercent: 85,
           lastReading: { value: 45.2, unit: 'PSI' },
-          machineId: 'machine-1',
-          machineName: 'Compressor A',
+          sensorGroupId: 'sensorGroup-1',
+          sensorGroupName: 'Compressor A',
           lastSeen: new Date(),
           faults: [],
         },
@@ -106,8 +106,8 @@ function FleetDashboard() {
           status: 'fault',
           batteryPercent: 42,
           lastReading: { value: 120.5, unit: 'PSI' },
-          machineId: 'machine-2',
-          machineName: 'Pump B',
+          sensorGroupId: 'sensorGroup-2',
+          sensorGroupName: 'Pump B',
           lastSeen: new Date(Date.now() - 3600000),
           faults: ['sensor_high', 'low_battery'],
         },
@@ -247,7 +247,7 @@ function FleetDashboard() {
               <TableHead>
                 <TableRow>
                   <TableCell>Node ID</TableCell>
-                  <TableCell>Machine</TableCell>
+                  <TableCell>SensorGroup</TableCell>
                   <TableCell>Status</TableCell>
                   <TableCell>Battery</TableCell>
                   <TableCell>Last Reading</TableCell>
@@ -261,7 +261,7 @@ function FleetDashboard() {
                     <TableCell>
                       <code>{node.nodeId}</code>
                     </TableCell>
-                    <TableCell>{node.machineName || node.machineId}</TableCell>
+                    <TableCell>{node.sensorGroupName || node.sensorGroupId}</TableCell>
                     <TableCell>
                       <Chip
                         label={node.status}

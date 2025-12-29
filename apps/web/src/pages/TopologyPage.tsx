@@ -35,11 +35,11 @@ interface Site {
   id: string;
   name: string;
   organizationId: string;
-  machines?: Machine[];
+  sensorGroups?: SensorGroup[];
   hubs?: Hub[];
 }
 
-interface Machine {
+interface SensorGroup {
   id: string;
   name: string;
   siteId: string;
@@ -66,9 +66,9 @@ function TopologyPage() {
   const [selectedOrg, setSelectedOrg] = useState<Organization | null>(null);
   const [sites, setSites] = useState<Site[]>([]);
   const [selectedSite, setSelectedSite] = useState<Site | null>(null);
-  const [machines, setMachines] = useState<Machine[]>([]);
+  const [sensorGroups, setSensorGroups] = useState<SensorGroup[]>([]);
   const [openDialog, setOpenDialog] = useState(false);
-  const [dialogType, setDialogType] = useState<'org' | 'site' | 'machine'>('org');
+  const [dialogType, setDialogType] = useState<'org' | 'site' | 'sensorGroup'>('org');
   const [formData, setFormData] = useState({ name: '', description: '' });
 
   const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
@@ -97,14 +97,14 @@ function TopologyPage() {
     }
   };
 
-  const loadMachines = async (siteId: string) => {
+  const loadSensorGroups = async (siteId: string) => {
     try {
       const response = await axios.get(
-        `${apiUrl}/api/topology/sites/${siteId}/machines`,
+        `${apiUrl}/api/topology/sites/${siteId}/sensorGroups`,
       );
-      setMachines(response.data);
+      setSensorGroups(response.data);
     } catch (error) {
-      console.error('Failed to load machines:', error);
+      console.error('Failed to load sensorGroups:', error);
     }
   };
 
@@ -116,10 +116,10 @@ function TopologyPage() {
 
   const handleSiteSelect = (site: Site) => {
     setSelectedSite(site);
-    loadMachines(site.id);
+    loadSensorGroups(site.id);
   };
 
-  const handleOpenDialog = (type: 'org' | 'site' | 'machine') => {
+  const handleOpenDialog = (type: 'org' | 'site' | 'sensorGroup') => {
     setDialogType(type);
     setFormData({ name: '', description: '' });
     setOpenDialog(true);
@@ -140,12 +140,12 @@ function TopologyPage() {
           organizationId: selectedOrg.id,
         });
         loadSites(selectedOrg.id);
-      } else if (dialogType === 'machine' && selectedSite) {
-        await axios.post(`${apiUrl}/api/topology/machines`, {
+      } else if (dialogType === 'sensorGroup' && selectedSite) {
+        await axios.post(`${apiUrl}/api/topology/sensorGroups`, {
           ...formData,
           siteId: selectedSite.id,
         });
-        loadMachines(selectedSite.id);
+        loadSensorGroups(selectedSite.id);
       }
       handleCloseDialog();
     } catch (error) {
@@ -160,7 +160,7 @@ function TopologyPage() {
       </Typography>
 
       <Typography variant="body1" paragraph>
-        Manage your organization structure: Organizations → Sites → Machines → Nodes
+        Manage your organization structure: Organizations → Sites → SensorGroups → Nodes
       </Typography>
 
       <Grid container spacing={3}>
@@ -215,7 +215,7 @@ function TopologyPage() {
                     >
                       <ListItemText
                         primary={site.name}
-                        secondary={`${site.machines?.length || 0} machines, ${site.hubs?.length || 0} hubs`}
+                        secondary={`${site.sensorGroups?.length || 0} sensorGroups, ${site.hubs?.length || 0} hubs`}
                       />
                     </ListItem>
                   ))}
@@ -227,27 +227,27 @@ function TopologyPage() {
           </Card>
         </Grid>
 
-        {/* Machines */}
+        {/* SensorGroups */}
         <Grid item xs={12} md={4}>
           <Card>
             <CardContent>
               <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-                <Typography variant="h6">Machines</Typography>
+                <Typography variant="h6">SensorGroups</Typography>
                 <IconButton
                   size="small"
                   disabled={!selectedSite}
-                  onClick={() => handleOpenDialog('machine')}
+                  onClick={() => handleOpenDialog('sensorGroup')}
                 >
                   <AddIcon />
                 </IconButton>
               </Box>
               {selectedSite ? (
                 <List>
-                  {machines.map((machine) => (
-                    <ListItem key={machine.id}>
+                  {sensorGroups.map((sensorGroup) => (
+                    <ListItem key={sensorGroup.id}>
                       <ListItemText
-                        primary={machine.name}
-                        secondary={`${machine.nodes?.length || 0} nodes`}
+                        primary={sensorGroup.name}
+                        secondary={`${sensorGroup.nodes?.length || 0} nodes`}
                       />
                       <IconButton edge="end" size="small">
                         <EditIcon />
@@ -274,7 +274,7 @@ function TopologyPage() {
                   <Typography variant="h6">Nodes at this Site</Typography>
                 </Box>
                 <Typography variant="body2" color="text.secondary">
-                  Total nodes across all machines: {machines.reduce((sum, m) => sum + (m.nodes?.length || 0), 0)}
+                  Total nodes across all sensorGroups: {sensorGroups.reduce((sum, m) => sum + (m.nodes?.length || 0), 0)}
                 </Typography>
               </CardContent>
             </Card>
@@ -299,7 +299,7 @@ function TopologyPage() {
       {/* Create Dialog */}
       <Dialog open={openDialog} onClose={handleCloseDialog}>
         <DialogTitle>
-          Create New {dialogType === 'org' ? 'Organization' : dialogType === 'site' ? 'Site' : 'Machine'}
+          Create New {dialogType === 'org' ? 'Organization' : dialogType === 'site' ? 'Site' : 'SensorGroup'}
         </DialogTitle>
         <DialogContent>
           <TextField

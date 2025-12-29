@@ -62,7 +62,7 @@ function HomePage() {
         <ul>
           <li>Ultra-low-power BLE sensor nodes with multi-year battery life</li>
           <li>Cellular gateway hubs for remote connectivity</li>
-          <li>Flexible topology management (Organizations → Sites → Machines → Nodes)</li>
+          <li>Flexible topology management (Organizations → Sites → SensorGroups → Nodes)</li>
           <li>Secure configuration and firmware updates</li>
           <li>Comprehensive diagnostics and fault detection</li>
           <li>Audit trail for all operations</li>
