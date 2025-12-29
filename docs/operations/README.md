@@ -118,8 +118,9 @@ az containerapp revision restart \
 
 ```powershell
 # Windows (PowerShell)
-# Generate new password
-$NEW_PASSWORD = -join ((48..57) + (65..90) + (97..122) | Get-Random -Count 32 | ForEach-Object {[char]$_})
+# Generate new password (cryptographically secure)
+Add-Type -AssemblyName System.Web
+$NEW_PASSWORD = [System.Web.Security.Membership]::GeneratePassword(32, 8)
 
 # Update PostgreSQL password
 az postgres flexible-server update `

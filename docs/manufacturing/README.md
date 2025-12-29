@@ -141,12 +141,14 @@ python scripts/bulk-provision.py \
 
 ```powershell
 # Windows (PowerShell)
-# Bulk enrollment via CSV
+# Bulk enrollment via CSV (same Python command)
 python scripts/bulk-provision.py `
   --dps-name <dps-name> `
   --enrollment-group <group-name> `
   --device-list devices.csv
 ```
+
+**Note**: Python commands are the same on Windows. The backtick (`) is PowerShell's line continuation character (equivalent to backslash in bash).
 
 ## Quality Assurance
 
