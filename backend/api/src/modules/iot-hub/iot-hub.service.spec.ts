@@ -153,7 +153,7 @@ describe('IotHubService', () => {
     it('should update topology in device twin', async () => {
       const siteId = 'site-123';
       const nodeMappings = [
-        { nodeId: 'AA:BB:CC:DD:EE:FF', machineId: 'machine-123' },
+        { nodeId: 'AA:BB:CC:DD:EE:FF', sensorGroupId: 'sensor-group-123' },
       ];
 
       const mockRegistry = {

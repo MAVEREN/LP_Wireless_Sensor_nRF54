@@ -72,23 +72,23 @@ describe('Topology Integration Tests (e2e)', () => {
 
       expect(hubRes.body.deviceId).toBe('hub-e2e-001');
 
-      // 4. Create machine
-      const machineRes = await request(app.getHttpServer())
-        .post('/api/topology/machines')
+      // 4. Create sensor group
+      const sensorGroupRes = await request(app.getHttpServer())
+        .post('/api/topology/sensor-groups')
         .send({
           siteId: siteId,
-          name: 'E2E Test Machine',
+          name: 'E2E Test Sensor Group',
           type: 'Conveyor',
         })
         .expect(201);
 
-      const machineId = machineRes.body.id;
+      const sensorGroupId = sensorGroupRes.body.id;
 
       // 5. Create node
       const nodeRes = await request(app.getHttpServer())
         .post('/api/topology/nodes')
         .send({
-          machineId: machineId,
+          sensorGroupId: sensorGroupId,
           deviceId: 'node-e2e-001',
           name: 'E2E Test Node',
           firmwareVersion: '1.0.0',

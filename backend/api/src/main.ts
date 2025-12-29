@@ -30,7 +30,7 @@ async function bootstrap() {
     .setVersion('1.0.0')
     .addBearerAuth()
     .addTag('auth', 'Authentication and authorization')
-    .addTag('topology', 'Organization, site, and machine management')
+    .addTag('topology', 'Organization, site, and sensor group management')
     .addTag('devices', 'Hub and node device management')
     .addTag('jobs', 'Job orchestration and monitoring')
     .addTag('templates', 'Sensor template management')
