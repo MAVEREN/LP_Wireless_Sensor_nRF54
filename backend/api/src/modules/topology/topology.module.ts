@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Organization } from './entities/organization.entity';
 import { Site } from './entities/site.entity';
-import { Machine } from './entities/machine.entity';
+import { SensorGroup } from './entities/sensor-group.entity';
 import { Hub } from './entities/hub.entity';
 import { Node } from './entities/node.entity';
 import { User } from './entities/user.entity';
@@ -14,7 +14,7 @@ import { TopologyService } from './topology.service';
     TypeOrmModule.forFeature([
       Organization,
       Site,
-      Machine,
+      SensorGroup,
       Hub,
       Node,
       User,

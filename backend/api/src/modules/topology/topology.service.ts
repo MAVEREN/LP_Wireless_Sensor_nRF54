@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Organization } from './entities/organization.entity';
 import { Site } from './entities/site.entity';
-import { Machine } from './entities/machine.entity';
+import { SensorGroup } from './entities/sensor-group.entity';
 import { Hub } from './entities/hub.entity';
 import { Node } from './entities/node.entity';
 
@@ -14,8 +14,8 @@ export class TopologyService {
     private organizationRepository: Repository<Organization>,
     @InjectRepository(Site)
     private siteRepository: Repository<Site>,
-    @InjectRepository(Machine)
-    private machineRepository: Repository<Machine>,
+    @InjectRepository(SensorGroup)
+    private sensorGroupRepository: Repository<SensorGroup>,
     @InjectRepository(Hub)
     private hubRepository: Repository<Hub>,
     @InjectRepository(Node)
@@ -45,14 +45,14 @@ export class TopologyService {
   async findSitesByOrganization(organizationId: string): Promise<Site[]> {
     return this.siteRepository.find({
       where: { organizationId },
-      relations: ['machines', 'hubs'],
+      relations: ['sensorGroups', 'hubs'],
     });
   }
 
   async findSiteById(id: string): Promise<Site> {
     return this.siteRepository.findOne({
       where: { id },
-      relations: ['organization', 'machines', 'hubs'],
+      relations: ['organization', 'sensorGroups', 'hubs'],
     });
   }
 
@@ -61,24 +61,24 @@ export class TopologyService {
     return this.siteRepository.save(site);
   }
 
-  // Machines
-  async findMachinesBySite(siteId: string): Promise<Machine[]> {
-    return this.machineRepository.find({
+  // Sensor Groups
+  async findSensorGroupsBySite(siteId: string): Promise<SensorGroup[]> {
+    return this.sensorGroupRepository.find({
       where: { siteId },
       relations: ['nodes'],
     });
   }
 
-  async findMachineById(id: string): Promise<Machine> {
-    return this.machineRepository.findOne({
+  async findSensorGroupById(id: string): Promise<SensorGroup> {
+    return this.sensorGroupRepository.findOne({
       where: { id },
       relations: ['site', 'nodes'],
     });
   }
 
-  async createMachine(data: Partial<Machine>): Promise<Machine> {
-    const machine = this.machineRepository.create(data);
-    return this.machineRepository.save(machine);
+  async createSensorGroup(data: Partial<SensorGroup>): Promise<SensorGroup> {
+    const sensorGroup = this.sensorGroupRepository.create(data);
+    return this.sensorGroupRepository.save(sensorGroup);
   }
 
   // Hubs
@@ -114,9 +114,9 @@ export class TopologyService {
   }
 
   // Nodes
-  async findNodesByMachine(machineId: string): Promise<Node[]> {
+  async findNodesBySensorGroup(sensorGroupId: string): Promise<Node[]> {
     return this.nodeRepository.find({
-      where: { machineId },
+      where: { sensorGroupId },
       relations: ['hub'],
     });
   }
@@ -124,21 +124,21 @@ export class TopologyService {
   async findNodesByHub(hubId: string): Promise<Node[]> {
     return this.nodeRepository.find({
       where: { hubId },
-      relations: ['machine'],
+      relations: ['sensorGroup'],
     });
   }
 
   async findNodeById(id: string): Promise<Node> {
     return this.nodeRepository.findOne({
       where: { id },
-      relations: ['machine', 'hub'],
+      relations: ['sensorGroup', 'hub'],
     });
   }
 
   async findNodeByNodeId(nodeId: string): Promise<Node> {
     return this.nodeRepository.findOne({
       where: { nodeId },
-      relations: ['machine', 'hub'],
+      relations: ['sensorGroup', 'hub'],
     });
   }
 
@@ -152,13 +152,13 @@ export class TopologyService {
     return this.findNodeById(id);
   }
 
-  async assignNodeToMachine(nodeId: string, machineId: string): Promise<Node> {
+  async assignNodeToSensorGroup(nodeId: string, sensorGroupId: string): Promise<Node> {
     const node = await this.findNodeByNodeId(nodeId);
     if (!node) {
       throw new Error('Node not found');
     }
     
-    node.machineId = machineId;
+    node.sensorGroupId = sensorGroupId;
     return this.nodeRepository.save(node);
   }
 

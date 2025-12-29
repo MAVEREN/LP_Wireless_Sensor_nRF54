@@ -2,10 +2,10 @@ import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateCol
 import { Site } from './site.entity';
 import { Node } from './node.entity';
 
-@Entity('machines')
+@Entity('sensor_groups')
 @Index(['siteId'])
 @Index(['name'])
-export class Machine {
+export class SensorGroup {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -24,11 +24,11 @@ export class Machine {
   @Column()
   siteId: string;
 
-  @ManyToOne(() => Site, (site) => site.machines)
+  @ManyToOne(() => Site, (site) => site.sensorGroups)
   @JoinColumn({ name: 'siteId' })
   site: Site;
 
-  @OneToMany(() => Node, (node) => node.machine)
+  @OneToMany(() => Node, (node) => node.sensorGroup)
   nodes: Node[];
 
   @CreateDateColumn()
