@@ -1,10 +1,10 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, Index } from 'typeorm';
-import { Machine } from './machine.entity';
+import { SensorGroup } from './sensor-group.entity';
 import { Hub } from './hub.entity';
 
 @Entity('nodes')
 @Index(['nodeId'], { unique: true })
-@Index(['machineId'])
+@Index(['sensorGroupId'])
 @Index(['hubId'])
 export class Node {
   @PrimaryGeneratedColumn('uuid')
@@ -58,11 +58,11 @@ export class Node {
   metadata: Record<string, any>;
 
   @Column({ nullable: true })
-  machineId: string;
+  sensorGroupId: string;
 
-  @ManyToOne(() => Machine, (machine) => machine.nodes, { nullable: true })
-  @JoinColumn({ name: 'machineId' })
-  machine: Machine;
+  @ManyToOne(() => SensorGroup, (sensorGroup) => sensorGroup.nodes, { nullable: true })
+  @JoinColumn({ name: 'sensorGroupId' })
+  sensorGroup: SensorGroup;
 
   @Column({ nullable: true })
   hubId: string;

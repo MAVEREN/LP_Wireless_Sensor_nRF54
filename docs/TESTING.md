@@ -106,6 +106,7 @@ Located in `apps/web/tests/e2e/**/*.spec.ts`
 #### Running E2E Tests
 
 ```bash
+# macOS/Linux
 cd apps/web
 
 # Install Playwright
@@ -125,6 +126,29 @@ npx playwright test tests/e2e/topology.spec.ts
 npx playwright test --debug
 ```
 
+```powershell
+# Windows (PowerShell)
+cd apps/web
+
+# Install Playwright
+npm install -D @playwright/test
+npx playwright install
+
+# Run tests
+npx playwright test
+
+# Run in UI mode
+npx playwright test --ui
+
+# Run specific test
+npx playwright test tests/e2e/topology.spec.ts
+
+# Debug mode
+npx playwright test --debug
+```
+
+**Windows Note**: Playwright will install browser binaries to `%USERPROFILE%\AppData\Local\ms-playwright`. Ensure you have sufficient disk space (~1GB).
+
 #### Test Structure
 
 ```typescript
@@ -136,7 +160,7 @@ test.describe('Topology Management', () => {
     
     await expect(page.getByText('Organizations')).toBeVisible();
     await expect(page.getByText('Sites')).toBeVisible();
-    await expect(page.getByText('Machines')).toBeVisible();
+    await expect(page.getByText('Sensor Groups')).toBeVisible();
   });
   
   test('should create new organization', async ({ page }) => {
@@ -180,19 +204,44 @@ npx playwright test --reporter=html
 #### Unit Tests (Host-based)
 
 ```bash
+# macOS/Linux
 cd firmware/node_nrf54l15
 west build -b native_posix -t run
 ```
 
+```powershell
+# Windows (nRF Connect SDK Terminal/PowerShell)
+cd firmware/node_nrf54l15
+west build -b native_posix -t run
+```
+
+**Windows Note**: Host-based testing using `native_posix` requires a POSIX-compatible environment. On Windows, this is provided through the nRF Connect SDK toolchain which includes a minimal POSIX layer.
+
 #### Hardware-in-Loop Tests
 
 ```bash
+# macOS/Linux
 # Flash firmware
 west flash
 
 # Run test suite
 python scripts/test_node.py --serial /dev/ttyACM0
 ```
+
+```powershell
+# Windows (nRF Connect SDK Terminal/PowerShell or regular PowerShell)
+# Flash firmware
+west flash
+
+# Run test suite (use COM port instead of /dev/ttyACM0)
+python scripts/test_node.py --serial COM3
+```
+
+**Windows Note**: To find your COM port:
+- Open Device Manager
+- Expand "Ports (COM & LPT)"
+- Look for "JLink CDC UART Port (COMx)" or "USB Serial Port (COMx)"
+- Use the COMx identifier (e.g., COM3, COM4)
 
 #### Test Cases
 
@@ -223,9 +272,18 @@ python scripts/test_node.py --serial /dev/ttyACM0
 #### BLE Central Tests
 
 ```bash
+# macOS/Linux
 cd tools/test_hub
 python test_hub.py --test-mode
 ```
+
+```powershell
+# Windows (PowerShell)
+cd tools/test_hub
+python test_hub.py --test-mode
+```
+
+**Windows Note**: Ensure your Bluetooth adapter supports BLE (Bluetooth 4.0+). You can check in Device Manager under "Bluetooth".
 
 #### Test Cases
 
@@ -267,7 +325,7 @@ python test_hub.py --test-mode
 
 3. **End-to-End Flow**:
    - Commission node via web app
-   - Assign to machine
+   - Assign to sensor group
    - Push config from cloud
    - Verify telemetry
 
@@ -280,7 +338,7 @@ python test_hub.py --test-mode
 3. Scan for devices
 4. Select node
 5. Configure sampling parameters
-6. Assign to machine
+6. Assign to sensor group
 7. Verify node appears in fleet dashboard
 
 **Expected**: Node commissioned and reporting data
@@ -288,7 +346,7 @@ python test_hub.py --test-mode
 #### Scenario 2: Remote Configuration
 
 1. Open web app → Topology
-2. Select machine with node
+2. Select sensor group with node
 3. Update sampling interval
 4. Submit job
 5. Monitor job status
@@ -383,9 +441,25 @@ TypeOrmModule.forRoot({
 ### Load Testing
 
 ```bash
+# macOS/Linux
 # Install k6
 brew install k6  # macOS
 apt install k6   # Linux
+
+# Run load test
+k6 run scripts/load-test.js
+```
+
+```powershell
+# Windows (PowerShell)
+# Install k6
+# Option 1: Using Chocolatey
+choco install k6
+
+# Option 2: Using winget
+winget install k6
+
+# Option 3: Download MSI installer from https://k6.io/docs/getting-started/installation/
 
 # Run load test
 k6 run scripts/load-test.js
@@ -442,10 +516,23 @@ Automated via GitHub Actions on every PR.
 ### Coverage Reports
 
 ```bash
+# macOS/Linux
 # Backend coverage
 cd backend/api
 npm run test:cov
 open coverage/lcov-report/index.html
+
+# Web coverage
+cd apps/web
+npm run test:coverage
+```
+
+```powershell
+# Windows (PowerShell)
+# Backend coverage
+cd backend/api
+npm run test:cov
+start coverage/lcov-report/index.html
 
 # Web coverage
 cd apps/web
@@ -470,8 +557,19 @@ npm run test:coverage
 ### Backend Tests Failing
 
 ```bash
+# macOS/Linux
 # Clear node_modules
 rm -rf node_modules package-lock.json
+npm install
+
+# Reset database
+npm run migration:reset
+```
+
+```powershell
+# Windows (PowerShell)
+# Clear node_modules
+Remove-Item -Recurse -Force node_modules, package-lock.json
 npm install
 
 # Reset database
@@ -481,6 +579,7 @@ npm run migration:reset
 ### Playwright Tests Failing
 
 ```bash
+# macOS/Linux
 # Update browsers
 npx playwright install
 
@@ -491,13 +590,66 @@ npx playwright clean
 npx playwright test --debug
 ```
 
+```powershell
+# Windows (PowerShell)
+# Update browsers
+npx playwright install
+
+# Clear cache
+npx playwright clean
+
+# Run in debug mode
+npx playwright test --debug
+```
+
+**Windows Note**: If Playwright installation fails, ensure you have:
+- Visual C++ Redistributable installed
+- Sufficient disk space (~1GB for browser binaries)
+- Antivirus not blocking the installation
+
 ### Firmware Tests Failing
 
 ```bash
+# macOS/Linux
 # Clean build
 rm -rf build
 west build -b nrf54l15pdk_nrf54l15_cpuapp --pristine
 ```
+
+```powershell
+# Windows (nRF Connect SDK Terminal/PowerShell)
+# Clean build
+Remove-Item -Recurse -Force build
+west build -b nrf54l15pdk_nrf54l15_cpuapp --pristine
+```
+
+### Windows-Specific Testing Issues
+
+#### Python Scripts Not Found
+
+Ensure Python is in your PATH:
+```powershell
+python --version
+# If not found, add Python to PATH or use py launcher:
+py --version
+py scripts/test_node.py --serial COM3
+```
+
+#### Serial Port Access Denied
+
+If you get "Access Denied" on COM ports:
+1. Close any serial terminal applications (PuTTY, TeraTerm, etc.)
+2. Close nRF Connect Programmer
+3. Disconnect and reconnect the device
+4. Run your terminal/IDE as Administrator
+
+#### Bluetooth Not Working in Test Hub
+
+Common issues:
+1. Ensure Bluetooth is enabled in Windows Settings
+2. Check if another application is using Bluetooth
+3. Update Bluetooth drivers from Device Manager
+4. Some USB Bluetooth adapters may not support BLE - use built-in Bluetooth if available
 
 ## Resources
 

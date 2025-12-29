@@ -76,7 +76,7 @@ Configuration and commands sent from cloud to device.
 
 ### Topology Object
 
-Maps nodes to machines in the logical topology.
+Maps nodes to sensor groups in the logical topology.
 
 ```json
 "topology": {
@@ -84,7 +84,7 @@ Maps nodes to machines in the logical topology.
   "nodeMappings": [
     {
       "nodeId": "string (MAC address)",
-      "machineId": "string (UUID)"
+      "sensorGroupId": "string (UUID)"
     }
   ]
 }

@@ -1,6 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany, JoinColumn, Index } from 'typeorm';
 import { Organization } from './organization.entity';
-import { Machine } from './machine.entity';
+import { SensorGroup } from './sensor-group.entity';
 import { Hub } from './hub.entity';
 
 @Entity('sites')
@@ -35,8 +35,8 @@ export class Site {
   @JoinColumn({ name: 'organizationId' })
   organization: Organization;
 
-  @OneToMany(() => Machine, (machine) => machine.site)
-  machines: Machine[];
+  @OneToMany(() => SensorGroup, (sensorGroup) => sensorGroup.site)
+  sensorGroups: SensorGroup[];
 
   @OneToMany(() => Hub, (hub) => hub.site)
   hubs: Hub[];

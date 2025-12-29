@@ -17,7 +17,7 @@ export class AuditLog {
   action: string; // CREATE, UPDATE, DELETE, etc.
 
   @Column()
-  resourceType: string; // organization, site, machine, node, hub, job, etc.
+  resourceType: string; // organization, site, sensor_group, node, hub, job, etc.
 
   @Column()
   resourceId: string; // ID of the affected resource

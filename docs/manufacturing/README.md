@@ -25,6 +25,7 @@ Guide for manufacturing, provisioning, and field deployment of Industrial Sensor
 #### 2. Programming
 
 ```bash
+# macOS/Linux
 # Flash factory firmware
 nrfjprog --program node_factory_v1.0.0.hex --chiperase --verify
 
@@ -35,13 +36,38 @@ nrfjprog --program mcuboot_v1.0.0.hex --sectorerase --verify
 nrfjprog --program node_app_v1.0.0.hex --sectorerase --verify --reset
 ```
 
+```powershell
+# Windows (PowerShell or Command Prompt)
+# Flash factory firmware
+nrfjprog --program node_factory_v1.0.0.hex --chiperase --verify
+
+# Flash bootloader
+nrfjprog --program mcuboot_v1.0.0.hex --sectorerase --verify
+
+# Flash application
+nrfjprog --program node_app_v1.0.0.hex --sectorerase --verify --reset
+```
+
+**Windows Note**: 
+- `nrfjprog` requires SEGGER J-Link drivers installed
+- Download from [SEGGER website](https://www.segger.com/downloads/jlink/)
+- Add `nrfjprog` to PATH or use full path: `C:\Program Files\Nordic Semiconductor\nrf-command-line-tools\bin\nrfjprog.exe`
+
 #### 3. Factory Test
 
 Run automated factory test sequence:
 
 ```bash
+# macOS/Linux
+python scripts/factory-test.py --serial /dev/ttyACM0 --test-plan node-v1
+```
+
+```powershell
+# Windows (PowerShell)
 python scripts/factory-test.py --serial COM3 --test-plan node-v1
 ```
+
+**Windows Note**: Replace `COM3` with your actual COM port. Find it in Device Manager under "Ports (COM & LPT)".
 
 Test sequence:
 - Power-on self-test
@@ -70,11 +96,22 @@ Similar process for Hub devices (nRF54L15 + nRF9160/9151).
 
 1. **Enrollment**:
    ```bash
+   # macOS/Linux
    # Create individual enrollment in DPS
    az iot dps enrollment create \
      --dps-name <dps-name> \
      --enrollment-id <device-id> \
      --attestation-type x509 \
+     --certificate-path device_cert.pem
+   ```
+   
+   ```powershell
+   # Windows (PowerShell)
+   # Create individual enrollment in DPS
+   az iot dps enrollment create `
+     --dps-name <dps-name> `
+     --enrollment-id <device-id> `
+     --attestation-type x509 `
      --certificate-path device_cert.pem
    ```
 
@@ -94,12 +131,24 @@ Similar process for Hub devices (nRF54L15 + nRF9160/9151).
 For manufacturing runs > 100 devices:
 
 ```bash
+# macOS/Linux
 # Bulk enrollment via CSV
 python scripts/bulk-provision.py \
   --dps-name <dps-name> \
   --enrollment-group <group-name> \
   --device-list devices.csv
 ```
+
+```powershell
+# Windows (PowerShell)
+# Bulk enrollment via CSV (same Python command)
+python scripts/bulk-provision.py `
+  --dps-name <dps-name> `
+  --enrollment-group <group-name> `
+  --device-list devices.csv
+```
+
+**Note**: Python commands are the same on Windows. The backtick (`) is PowerShell's line continuation character (equivalent to backslash in bash).
 
 ## Quality Assurance
 
@@ -152,7 +201,7 @@ Records stored in manufacturing database.
    - Select "Commission Node"
    - Scan for nearby nodes
    - Select node by serial number
-   - Assign to machine/asset
+   - Assign to sensor group
    - Bind to local hub
    - Apply configuration template
    - Verify first reading
@@ -201,6 +250,13 @@ Hardware:
 
 Software:
 ```bash
+# macOS/Linux
+# Run full EOL test
+python scripts/eol-test.py --station-id 1 --device-type node
+```
+
+```powershell
+# Windows (PowerShell)
 # Run full EOL test
 python scripts/eol-test.py --station-id 1 --device-type node
 ```

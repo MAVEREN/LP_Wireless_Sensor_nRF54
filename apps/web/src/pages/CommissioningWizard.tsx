@@ -37,7 +37,7 @@ function CommissioningWizard({ mode }: CommissioningWizardProps) {
   const [config, setConfig] = useState({
     organizationId: '',
     siteId: '',
-    machineId: '',
+    sensorGroupId: '',
     nodeName: '',
     samplingInterval: 60,
     warmupMs: 100,
@@ -120,7 +120,7 @@ function CommissioningWizard({ mode }: CommissioningWizardProps) {
         await axios.post(`${apiUrl}/api/topology/nodes`, {
           nodeId: deviceInfo.id,
           name: config.nodeName,
-          machineId: config.machineId,
+          sensorGroupId: config.sensorGroupId,
           configuration: {
             sampling: {
               intervalSeconds: config.samplingInterval,
@@ -200,7 +200,7 @@ function CommissioningWizard({ mode }: CommissioningWizardProps) {
         return (
           <Box>
             <Typography variant="h6" gutterBottom>
-              {mode === 'node' ? 'Select Machine' : 'Select Site'}
+              {mode === 'node' ? 'Select SensorGroup' : 'Select Site'}
             </Typography>
             <FormControl fullWidth sx={{ mb: 2 }}>
               <InputLabel>Organization</InputLabel>
@@ -226,13 +226,13 @@ function CommissioningWizard({ mode }: CommissioningWizardProps) {
 
             {mode === 'node' && (
               <FormControl fullWidth sx={{ mb: 2 }}>
-                <InputLabel>Machine</InputLabel>
+                <InputLabel>SensorGroup</InputLabel>
                 <Select
-                  value={config.machineId}
-                  onChange={(e) => setConfig({ ...config, machineId: e.target.value })}
+                  value={config.sensorGroupId}
+                  onChange={(e) => setConfig({ ...config, sensorGroupId: e.target.value })}
                 >
-                  <MenuItem value="machine-1">Compressor A</MenuItem>
-                  <MenuItem value="machine-2">Pump B</MenuItem>
+                  <MenuItem value="sensorGroup-1">Compressor A</MenuItem>
+                  <MenuItem value="sensorGroup-2">Pump B</MenuItem>
                 </Select>
               </FormControl>
             )}

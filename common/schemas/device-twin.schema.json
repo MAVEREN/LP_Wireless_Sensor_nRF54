@@ -23,18 +23,18 @@
             },
             "nodeMappings": {
               "type": "array",
-              "description": "Node to machine assignments",
+              "description": "Node to sensor group assignments",
               "items": {
                 "type": "object",
-                "required": ["nodeId", "machineId"],
+                "required": ["nodeId", "sensorGroupId"],
                 "properties": {
                   "nodeId": {
                     "type": "string",
                     "description": "Node identifier (MAC address)"
                   },
-                  "machineId": {
+                  "sensorGroupId": {
                     "type": "string",
-                    "description": "Machine/asset identifier"
+                    "description": "Sensor group identifier"
                   }
                 }
               }

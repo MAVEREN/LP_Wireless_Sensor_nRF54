@@ -17,7 +17,7 @@ function RemoteModePage() {
           Features
         </Typography>
         <ul>
-          <li>View all organizations, sites, and machines</li>
+          <li>View all organizations, sites, and sensorGroups</li>
           <li>Monitor node and hub status</li>
           <li>Configure devices remotely via Device Twin</li>
           <li>Orchestrate firmware updates</li>

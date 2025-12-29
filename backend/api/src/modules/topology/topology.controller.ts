@@ -3,7 +3,7 @@ import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { TopologyService } from './topology.service';
 import { Organization } from './entities/organization.entity';
 import { Site } from './entities/site.entity';
-import { Machine } from './entities/machine.entity';
+import { SensorGroup } from './entities/sensor-group.entity';
 import { Hub } from './entities/hub.entity';
 import { Node } from './entities/node.entity';
 
@@ -51,23 +51,23 @@ export class TopologyController {
     return this.topologyService.createSite(data);
   }
 
-  // Machines
-  @Get('sites/:siteId/machines')
-  @ApiOperation({ summary: 'Get machines for site' })
-  async getMachinesBySite(@Param('siteId') siteId: string): Promise<Machine[]> {
-    return this.topologyService.findMachinesBySite(siteId);
+  // Sensor Groups
+  @Get('sites/:siteId/sensor-groups')
+  @ApiOperation({ summary: 'Get sensor groups for site' })
+  async getSensorGroupsBySite(@Param('siteId') siteId: string): Promise<SensorGroup[]> {
+    return this.topologyService.findSensorGroupsBySite(siteId);
   }
 
-  @Get('machines/:id')
-  @ApiOperation({ summary: 'Get machine by ID' })
-  async getMachine(@Param('id') id: string): Promise<Machine> {
-    return this.topologyService.findMachineById(id);
+  @Get('sensor-groups/:id')
+  @ApiOperation({ summary: 'Get sensor group by ID' })
+  async getSensorGroup(@Param('id') id: string): Promise<SensorGroup> {
+    return this.topologyService.findSensorGroupById(id);
   }
 
-  @Post('machines')
-  @ApiOperation({ summary: 'Create machine' })
-  async createMachine(@Body() data: Partial<Machine>): Promise<Machine> {
-    return this.topologyService.createMachine(data);
+  @Post('sensor-groups')
+  @ApiOperation({ summary: 'Create sensor group' })
+  async createSensorGroup(@Body() data: Partial<SensorGroup>): Promise<SensorGroup> {
+    return this.topologyService.createSensorGroup(data);
   }
 
   // Hubs
@@ -96,10 +96,10 @@ export class TopologyController {
   }
 
   // Nodes
-  @Get('machines/:machineId/nodes')
-  @ApiOperation({ summary: 'Get nodes for machine' })
-  async getNodesByMachine(@Param('machineId') machineId: string): Promise<Node[]> {
-    return this.topologyService.findNodesByMachine(machineId);
+  @Get('sensor-groups/:sensorGroupId/nodes')
+  @ApiOperation({ summary: 'Get nodes for sensor group' })
+  async getNodesBySensorGroup(@Param('sensorGroupId') sensorGroupId: string): Promise<Node[]> {
+    return this.topologyService.findNodesBySensorGroup(sensorGroupId);
   }
 
   @Get('hubs/:hubId/nodes')
@@ -126,13 +126,13 @@ export class TopologyController {
     return this.topologyService.updateNode(id, data);
   }
 
-  @Put('nodes/:nodeId/assign/:machineId')
-  @ApiOperation({ summary: 'Assign node to machine' })
-  async assignNodeToMachine(
+  @Put('nodes/:nodeId/assign/:sensorGroupId')
+  @ApiOperation({ summary: 'Assign node to sensor group' })
+  async assignNodeToSensorGroup(
     @Param('nodeId') nodeId: string,
-    @Param('machineId') machineId: string,
+    @Param('sensorGroupId') sensorGroupId: string,
   ): Promise<Node> {
-    return this.topologyService.assignNodeToMachine(nodeId, machineId);
+    return this.topologyService.assignNodeToSensorGroup(nodeId, sensorGroupId);
   }
 
   @Put('nodes/:nodeId/bind/:hubId')

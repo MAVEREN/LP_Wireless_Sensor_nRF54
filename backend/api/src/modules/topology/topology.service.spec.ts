@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { TopologyService } from './topology.service';
 import { Organization } from './entities/organization.entity';
 import { Site } from './entities/site.entity';
-import { Machine } from './entities/machine.entity';
+import { SensorGroup } from './entities/sensor-group.entity';
 import { Node } from './entities/node.entity';
 import { Hub } from './entities/hub.entity';
 
@@ -12,7 +12,7 @@ describe('TopologyService', () => {
   let service: TopologyService;
   let orgRepo: Repository<Organization>;
   let siteRepo: Repository<Site>;
-  let machineRepo: Repository<Machine>;
+  let sensorGroupRepo: Repository<SensorGroup>;
   let nodeRepo: Repository<Node>;
   let hubRepo: Repository<Hub>;
 
@@ -56,7 +56,7 @@ describe('TopologyService', () => {
           },
         },
         {
-          provide: getRepositoryToken(Machine),
+          provide: getRepositoryToken(SensorGroup),
           useValue: {
             find: jest.fn(),
             findOne: jest.fn(),
@@ -90,8 +90,8 @@ describe('TopologyService', () => {
       getRepositoryToken(Organization),
     );
     siteRepo = module.get<Repository<Site>>(getRepositoryToken(Site));
-    machineRepo = module.get<Repository<Machine>>(
-      getRepositoryToken(Machine),
+    sensorGroupRepo = module.get<Repository<SensorGroup>>(
+      getRepositoryToken(SensorGroup),
     );
     nodeRepo = module.get<Repository<Node>>(getRepositoryToken(Node));
     hubRepo = module.get<Repository<Hub>>(getRepositoryToken(Hub));
@@ -140,7 +140,7 @@ describe('TopologyService', () => {
       expect(result).toEqual(expected);
       expect(siteRepo.find).toHaveBeenCalledWith({
         where: { organizationId: mockOrganization.id },
-        relations: ['machines', 'hubs'],
+        relations: ['sensorGroups', 'hubs'],
       });
     });
   });
