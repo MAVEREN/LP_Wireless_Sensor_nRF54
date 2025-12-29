@@ -325,7 +325,7 @@ python test_hub.py --test-mode
 
 3. **End-to-End Flow**:
    - Commission node via web app
-   - Assign to machine
+   - Assign to sensor group
    - Push config from cloud
    - Verify telemetry
 

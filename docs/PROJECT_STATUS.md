@@ -172,9 +172,9 @@ The project now has Node firmware, Hub BLE firmware, complete backend with unit 
 ### Topology (15 endpoints)
 - Organizations: GET all, GET by ID, POST create
 - Sites: GET by org, GET by ID, POST create
-- Machines: GET by site, GET by ID, POST create
+- Sensor Groups: GET by site, GET by ID, POST create
 - Hubs: GET by site, GET by ID, POST create, PUT update
-- Nodes: GET by machine, GET by hub, GET by ID, POST create, PUT update, PUT assign, PUT bind
+- Nodes: GET by sensor group, GET by hub, GET by ID, POST create, PUT update, PUT assign, PUT bind
 
 ### IoT Hub (9 endpoints)
 - GET device twin
